@@ -11,7 +11,6 @@ func main() {
 	mux := http.NewServeMux()
 	hh := handlers.NewHandlers(mux)
 
-	hh.AddHandler("/hello", handlers.NewHelloHandler())
 	hh.AddHandler("/counter", handlers.NewCounterMessaging())
 
 	rh, exists := os.LookupEnv("REDIS_URL")
