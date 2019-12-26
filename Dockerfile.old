@@ -1,0 +1,7 @@
+FROM golang:alpine
+RUN mkdir /app
+WORKDIR /app
+COPY  . .
+RUN go build -o server server.go
+ENTRYPOINT [ "./server" ]
+EXPOSE 3000
