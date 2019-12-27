@@ -2,15 +2,15 @@ package handlers
 
 import "strconv"
 
-type CounterMessaging struct {
+type counterMessaging struct {
 	count int
 }
 
-func (m *CounterMessaging) getMessage() interface{} {
+func (m *counterMessaging) getMessage() interface{} {
 	m.count++
 	return "Counter: " + strconv.Itoa(m.count)
 }
 
-func NewCounterMessaging() *CounterMessaging {
-	return &CounterMessaging{}
+func NewCounterMessaging() *counterMessaging {
+	return &counterMessaging{}
 }

@@ -6,12 +6,12 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-type DBCounterMessaging struct {
+type dbCounterMessaging struct {
 	redis.Conn
 	field string
 }
 
-func (m *DBCounterMessaging) getMessage() interface{} {
+func (m *dbCounterMessaging) getMessage() interface{} {
 	_, err := m.Do("INCR", m.field)
 	if err != nil {
 		log.Println(err.Error())
@@ -21,7 +21,7 @@ func (m *DBCounterMessaging) getMessage() interface{} {
 	return newValue
 }
 
-func NewDBCounterMessaging(host string) *DBCounterMessaging {
+func NewDBCounterMessaging(host string) *dbCounterMessaging {
 	conn, err := redis.Dial("tcp", host)
 	if err != nil {
 		log.Fatal(err)
@@ -32,7 +32,7 @@ func NewDBCounterMessaging(host string) *DBCounterMessaging {
 		conn.Do("SET", field, 0)
 	}
 
-	return &DBCounterMessaging{
+	return &dbCounterMessaging{
 		conn,
 		field,
 	}

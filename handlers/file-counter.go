@@ -7,18 +7,18 @@ import (
 	"strconv"
 )
 
-type FileCounterMessaging struct {
+type fileCounterMessaging struct {
 	filepath string
 }
 
-func (m *FileCounterMessaging) getMessage() interface{} {
+func (m *fileCounterMessaging) getMessage() interface{} {
 	cnt, _ := m.readFromFile()
 	cnt++
 	m.writeToFile(cnt)
 	return "Counter: " + strconv.Itoa(cnt)
 }
 
-func (m *FileCounterMessaging) readFromFile() (int, error) {
+func (m *fileCounterMessaging) readFromFile() (int, error) {
 	cntRaw, err := ioutil.ReadFile(m.filepath)
 	if err != nil {
 		return 0, err
@@ -32,17 +32,17 @@ func (m *FileCounterMessaging) readFromFile() (int, error) {
 	return cnt, nil
 }
 
-func (m FileCounterMessaging) writeToFile(cnt int) error {
+func (m fileCounterMessaging) writeToFile(cnt int) error {
 	return ioutil.WriteFile(m.filepath, []byte(strconv.Itoa(cnt)), 0644)
 }
 
-func NewFileCounterMessaging() *FileCounterMessaging {
+func NewFileCounterMessaging() *fileCounterMessaging {
 	path := "data/counter"
 	_, err := openOrCreate(path)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fcm := &FileCounterMessaging{filepath: path}
+	fcm := &fileCounterMessaging{filepath: path}
 	return fcm
 }
 
