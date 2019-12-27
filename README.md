@@ -35,7 +35,7 @@ docker create --name app_redis --network backend redis:alpine
 Создать контейнер на основе образа приложения
 
 ```
-docker create --name app -p 3000:3000 --network backend -e "REDIS_URL=app_redis:6379" --mount source=file-data,target=/app/data learn_docker
+docker create --name app -p 3000:3000 --network backend -e "REDIS_URL=app_redis:6379" --mount source=file-data,target=/data learn_docker
 ```
 
 Запустить контейнер с redis

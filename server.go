@@ -23,9 +23,7 @@ func main() {
 	}
 
 	// Работа с файлом
-	fileCounterMessaging := handlers.NewFileCounterMessaging()
-	defer fileCounterMessaging.File.Close()
-	hh.AddHandler("/counter-file", fileCounterMessaging)
+	hh.AddHandler("/counter-file", handlers.NewFileCounterMessaging())
 
 	// Просто ссылки
 	linksMessaging := handlers.NewLinksMessaging(hh.Links...)

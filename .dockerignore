@@ -4,3 +4,5 @@ Dockerfile.old
 docker-compose.yml
 docker-compose.old.yml
 data/*
+.vscode
+README.md

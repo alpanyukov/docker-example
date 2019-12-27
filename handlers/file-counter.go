@@ -1,58 +1,48 @@
 package handlers
 
 import (
-	"bufio"
-	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
 )
 
 type FileCounterMessaging struct {
-	cnt int
-	*os.File
-	*bufio.ReadWriter
+	filepath string
 }
 
 func (m *FileCounterMessaging) getMessage() interface{} {
-	m.cnt++
-	m.syncFileWithTemp()
-	return "Counter: " + strconv.Itoa(m.cnt)
+	cnt, _ := m.readFromFile()
+	cnt++
+	m.writeToFile(cnt)
+	return "Counter: " + strconv.Itoa(cnt)
 }
 
-func (m *FileCounterMessaging) syncTempWithFile() {
-	countRaw, err := m.ReadWriter.ReadString('\n')
-	if err != io.EOF {
-		log.Println(err.Error())
-	}
-	log.Println("readed", countRaw)
-	if countRaw == "" {
-		m.cnt = 0
-		return
-	}
-	count, _ := strconv.Atoi(countRaw)
-	m.cnt = count
-}
-func (m *FileCounterMessaging) syncFileWithTemp() {
-	log.Println("save number", m.cnt)
-	m.File.Truncate(0)
-	m.File.Seek(0, 0)
-	_, err := m.ReadWriter.WriteString(strconv.Itoa(m.cnt))
-	m.ReadWriter.Flush()
+func (m *FileCounterMessaging) readFromFile() (int, error) {
+	cntRaw, err := ioutil.ReadFile(m.filepath)
 	if err != nil {
-		log.Println("cant write to file", err.Error())
+		return 0, err
 	}
+
+	cnt, err := strconv.Atoi(string(cntRaw))
+	if err != nil {
+		return 0, err
+	}
+
+	return cnt, nil
+}
+
+func (m FileCounterMessaging) writeToFile(cnt int) error {
+	return ioutil.WriteFile(m.filepath, []byte(strconv.Itoa(cnt)), 0644)
 }
 
 func NewFileCounterMessaging() *FileCounterMessaging {
 	path := "data/counter"
-	f, err := openOrCreate(path)
+	_, err := openOrCreate(path)
 	if err != nil {
 		log.Fatal(err)
 	}
-	r := bufio.NewReadWriter(bufio.NewReader(f), bufio.NewWriter(f))
-	fcm := &FileCounterMessaging{0, f, r}
-	fcm.syncTempWithFile()
+	fcm := &FileCounterMessaging{filepath: path}
 	return fcm
 }
 
@@ -68,12 +58,12 @@ func openOrCreate(path string) (*os.File, error) {
 	var f *os.File
 	var err error
 	if !fileExists(path) {
-		f, err = os.Create("data/counter")
+		// Папка должна быть создана! Это не рекурсивное создание
+		_, err = os.Create(path)
 		if err != nil {
 			return nil, err
 		}
-	} else {
-		f, err = os.OpenFile(path, os.O_RDWR, os.ModePerm)
 	}
+	f, err = os.OpenFile(path, os.O_RDWR, 0644)
 	return f, err
 }
